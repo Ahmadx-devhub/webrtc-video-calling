@@ -12,7 +12,6 @@ const RoomPage = () => {
   const [myStream, setMyStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
 
-  // Get camera
   useEffect(() => {
     const getMedia = async () => {
       try {
@@ -29,7 +28,7 @@ const RoomPage = () => {
     getMedia();
   }, []);
 
-  // Send local tracks
+
   const sendStreams = useCallback((stream = myStream) => {
     if (!stream) return;
     for (const track of stream.getTracks()) {
@@ -43,7 +42,7 @@ const RoomPage = () => {
     }
   }, [myStream]);
 
-  // Handle remote stream
+
   useEffect(() => {
     peer.peer.ontrack = (event) => {
       console.log("Got Remote Stream");
@@ -51,7 +50,7 @@ const RoomPage = () => {
     };
   }, []);
 
-  // ICE Candidate handling
+
   useEffect(() => {
     peer.peer.onicecandidate = (event) => {
       if (event.candidate && remoteSocketId) {
@@ -79,7 +78,7 @@ const RoomPage = () => {
     socket.emit("user:call", { to: remoteSocketId, offer });
   }, [remoteSocketId, myStream, socket, sendStreams]);
 
-  // Receiver
+
   const handleIncomingCall = useCallback(
     async ({ from, offer }) => {
       console.log("Incoming call");
@@ -103,7 +102,6 @@ const RoomPage = () => {
     await peer.setRemoteDescription(ans);
   }, []);
 
-  // Receive ICE
   const handleIceCandidate = useCallback(async ({ candidate }) => {
     try {
       if (candidate) {
@@ -114,7 +112,7 @@ const RoomPage = () => {
     }
   }, []);
 
-  // Socket listeners
+
   useEffect(() => {
     socket.on("user:joined", handleUserJoined);
     socket.on("incoming:call", handleIncomingCall);
